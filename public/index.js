@@ -1830,15 +1830,29 @@ var RequestForJSON = function () {
     }
 
     (0, _createClass3.default)(RequestForJSON, [{
-        key: "_request",
+        key: '_request',
         value: function _request() {
-            return fetch('https://wind-bow.gomix.me/twitch-api/channels/freecodecamp').then(function (result) {
-                return result.json();
-            }).then(function (data) {
-                console.log(data);
-            }).catch(function (err) {
-                console.log(err);
-            });
+            // return fetch('https://wind-bow.gomix.me/twitch-api/streams/freecodecamp?callback=?', {mode: 'cors'})
+            //     .then(response => {
+            //         return response.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data);
+            //     })
+            //     .catch(err => {
+            //         console.log(err);
+            //     });
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', 'https://wind-bow.gomix.me/twitch-api/streams/freecodecamp', false);
+
+            xhr.send();
+
+            if (xhr.status != 200) {
+                alert(xhr.status + ': ' + xhr.statusText);
+            } else {
+                alert(xhr.responseText);
+            }
         }
     }]);
     return RequestForJSON;
