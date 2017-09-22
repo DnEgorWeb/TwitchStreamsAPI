@@ -2,6 +2,8 @@
     display: inline-block;
     background-color: darkorange;
     border-radius: 10px;
+    min-width: 70%;
+    max-width: 70%;
 }
 
 .twitchAPI>h3 {
@@ -60,5 +62,21 @@
 }
 
 .streams-list>li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     border-bottom: 2px solid #f6efdd;
+    color: #f6efdd;
+    font-size: 1.2em;
+}
+
+.streams-list>li>img {
+    width: 10%;
+    margin: 0 5%;
+}
+
+.channel_status {
+    margin-left: auto;
+    margin-right: 5%;
+    text-align: center;
 }

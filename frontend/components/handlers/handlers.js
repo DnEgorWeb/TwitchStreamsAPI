@@ -21,21 +21,21 @@ export default class Handlers {
 
         if (eventLink.classList.contains('twitch-link-all')) {
             this._el.querySelectorAll('.streams-list>li').forEach(item => {
-                item.style.display = 'block';
+                item.style.display = 'flex';
             });
         } else if (eventLink.classList.contains('twitch-link-online')) {
             this._el.querySelectorAll('.streams-list>.offline').forEach(item => {
                 item.style.display = 'none';
             });
             this._el.querySelectorAll('.streams-list>.online').forEach(item => {
-                item.style.display = 'block';
+                item.style.display = 'flex';
             });
         } else {
             this._el.querySelectorAll('.streams-list>.online').forEach(item => {
                 item.style.display = 'none';
             });
             this._el.querySelectorAll('.streams-list>.offline').forEach(item => {
-                item.style.display = 'block';
+                item.style.display = 'flex';
             });
         }
     }

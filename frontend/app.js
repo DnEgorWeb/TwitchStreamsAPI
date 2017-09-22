@@ -2,7 +2,7 @@ import Render from './components/render/render';
 import Handlers from './components/handlers/handlers';
 import RequestForJSON from './components/request/request';
 
-new Render({
+const render = new Render({
     el: document.querySelector('body')
 });
 
@@ -11,5 +11,6 @@ new Handlers({
 });
 
 new RequestForJSON({
-    arr: ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+    arr: ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"],
+    renderLi: render._renderLi
 });

@@ -509,7 +509,7 @@ var _request2 = _interopRequireDefault(_request);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-new _render2.default({
+var render = new _render2.default({
     el: document.querySelector('body')
 });
 
@@ -518,7 +518,8 @@ new _handlers2.default({
 });
 
 new _request2.default({
-    arr: ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"]
+    arr: ["ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"],
+    renderLi: render._renderLi
 });
 
 /***/ }),
@@ -559,6 +560,30 @@ var Render = function () {
         key: '_render',
         value: function _render() {
             this._el.innerHTML = (0, _template2.default)();
+        }
+    }, {
+        key: '_renderLi',
+        value: function _renderLi(obj) {
+            var name = void 0,
+                logoSrc = void 0,
+                status = void 0;
+
+            if (obj.stream) {
+                name = obj.stream.channel.display_name;
+                logoSrc = obj.stream.channel.logo;
+                status = obj.stream.channel.status;
+            } else {
+                name = obj.display_name;
+                logoSrc = obj.logo;
+                status = "offline";
+            }
+
+            var ul = document.querySelector('.streams-list');
+
+            var li = document.createElement('li');
+            li.className = status === 'offline' ? "offline" : "online";
+            li.innerHTML = '<img src="' + logoSrc + '"><div class="channel_name">' + name + '</div><div class="channel_status">' + status + '</div>';
+            ul.append(li);
         }
     }]);
     return Render;
@@ -781,7 +806,7 @@ module.exports = function (bitmap, value) {
 var Handlebars = __webpack_require__(26);
 function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<section class=\"twitchAPI\">\r\n    <h3>TwitchTV Streams</h3>\r\n    <nav class=\"twitch-nav\">\r\n        <ul>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-all disabled\">\r\n                <li>All</li>\r\n            </a>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-online\">\r\n                <li>Online</li>\r\n            </a>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-offline\">\r\n                <li>Offline</li>\r\n            </a>\r\n        </ul>\r\n    </nav>\r\n    <ul class=\"streams-list\">\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"offline\">smth</li>\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"offline\">smth</li>\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"online\">smth</li>\r\n        <li class=\"offline\">smth</li>\r\n    </ul>\r\n</section>";
+    return "<section class=\"twitchAPI\">\r\n    <h3>TwitchTV Streams</h3>\r\n    <nav class=\"twitch-nav\">\r\n        <ul>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-all disabled\">\r\n                <li>All</li>\r\n            </a>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-online\">\r\n                <li>Online</li>\r\n            </a>\r\n            <a href=\"#\" class=\"twitch-link twitch-link-offline\">\r\n                <li>Offline</li>\r\n            </a>\r\n        </ul>\r\n    </nav>\r\n    <ul class=\"streams-list\">\r\n    </ul>\r\n</section>";
 },"useData":true});
 
 /***/ }),
@@ -1775,21 +1800,21 @@ var Handlers = function () {
 
             if (eventLink.classList.contains('twitch-link-all')) {
                 this._el.querySelectorAll('.streams-list>li').forEach(function (item) {
-                    item.style.display = 'block';
+                    item.style.display = 'flex';
                 });
             } else if (eventLink.classList.contains('twitch-link-online')) {
                 this._el.querySelectorAll('.streams-list>.offline').forEach(function (item) {
                     item.style.display = 'none';
                 });
                 this._el.querySelectorAll('.streams-list>.online').forEach(function (item) {
-                    item.style.display = 'block';
+                    item.style.display = 'flex';
                 });
             } else {
                 this._el.querySelectorAll('.streams-list>.online').forEach(function (item) {
                     item.style.display = 'none';
                 });
                 this._el.querySelectorAll('.streams-list>.offline').forEach(function (item) {
-                    item.style.display = 'block';
+                    item.style.display = 'flex';
                 });
             }
         }
@@ -1825,19 +1850,34 @@ var RequestForJSON = function () {
         (0, _classCallCheck3.default)(this, RequestForJSON);
 
         this._arr = options.arr;
+        this._renderLi = options.renderLi;
 
         this._request(this._arr);
     }
 
     (0, _createClass3.default)(RequestForJSON, [{
-        key: "_request",
+        key: '_request',
         value: function _request() {
-            return fetch('https://api.twitch.tv/kraken/streams/freecodecamp&client_id=pkalnam3jd1vpqvy3y2kp11usqne5r').then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                console.log(data);
-            }).catch(function (err) {
-                console.log(err);
+            var renderLi = this._renderLi;
+
+            this._arr.forEach(function (item) {
+                return fetch('https://api.twitch.tv/kraken/streams/' + item + '?client_id=pkalnam3jd1vpqvy3y2kp11usqne5r').then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    if (!data.stream) {
+                        return fetch('https://api.twitch.tv/kraken/channels/' + item + '?client_id=pkalnam3jd1vpqvy3y2kp11usqne5r').then(function (response) {
+                            return response.json();
+                        }).then(function (data) {
+                            renderLi(data);
+                        }).catch(function (err) {
+                            console.log(err);
+                        });
+                    } else {
+                        renderLi(data);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                });
             });
         }
     }]);
